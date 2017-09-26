@@ -1,0 +1,31 @@
+simple.o: simple.c \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdio.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdio.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/string.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/string.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/string.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/strings.h \
+  ../oniguruma.h
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdio.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdio.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/string.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/string.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/string.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/strings.h:
+
+../oniguruma.h:

@@ -1,0 +1,31 @@
+posix.o: posix.c \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdio.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdio.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h \
+  ../onigposix.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdlib.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/stdlib.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdlib.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/alloca.h
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdio.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdio.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h:
+
+../onigposix.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdlib.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/stdlib.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdlib.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/alloca.h:

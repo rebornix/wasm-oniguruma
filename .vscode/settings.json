@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "oniguruma.h": "c",
+        "iterator": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
+    }
+}

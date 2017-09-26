@@ -1,0 +1,73 @@
+regsyntax.lo: regsyntax.c regint.h config.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdlib.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/stdlib.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdlib.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/alloca.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/string.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/string.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/string.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/strings.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/ctype.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/ctype.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/ctype.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/sys/types.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/endian.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdint.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdint.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/stdint.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/sys/select.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/sys/sysmacros.h \
+  regenc.h oniguruma.h
+
+regint.h:
+
+config.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdlib.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/stdlib.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdlib.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/alloca.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/string.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/string.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/string.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/strings.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/ctype.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/compat/ctype.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/ctype.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/sys/types.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/endian.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdint.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdint.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/stdint.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/sys/select.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/sys/sysmacros.h:
+
+regenc.h:
+
+oniguruma.h:

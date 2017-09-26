@@ -1,0 +1,20 @@
+regversion.lo: regversion.c config.h oniguruma.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdio.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdio.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h \
+  /Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h
+
+config.h:
+
+oniguruma.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/stdio.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libcxx/__config:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/stdio.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/features.h:
+
+/Users/penlv/code/emsdk/emscripten/incoming/system/include/libc/bits/alltypes.h:
