@@ -11,10 +11,10 @@ class OnigScanner {
 public:
   OnigScanner(std::vector<std::string> sources);
 
+  OnigResult* FindNextMatchSync(std::string v8String, size_t v8StartLocation);
 private:
 
-  void FindNextMatch(std::string v8String, size_t v8StartLocation);
-//   Local<Value> FindNextMatchSync(OnigString* onigString, Local<Number> v8StartLocation);
+//   void FindNextMatch(std::string v8String, size_t v8StartLocation);
 //   Local<Value> FindNextMatchSync(Local<String> v8String, Local<Number> v8StartLocation);
 //   static Local<Value> CaptureIndicesForMatch(OnigResult* result, OnigString* source);
 

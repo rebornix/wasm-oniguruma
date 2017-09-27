@@ -20,9 +20,15 @@ OnigScanner::OnigScanner(std::vector<std::string> sources)
     printf("Sources length = %d\n", length);
 }
 
+OnigResult* OnigScanner::FindNextMatchSync(std::string v8String, size_t v8StartLocation) {
+    OnigResult* bestResult = searcher->Search(v8String, v8StartLocation);
+    return bestResult;
+}
+
 EMSCRIPTEN_BINDINGS(OnigScanner) {
     register_vector<std::string>("VectorString");
     class_<OnigScanner>("OnigScanner")
       .constructor<std::vector<std::string>>(allow_raw_pointers())
+      .function("findNextMatchSync", &OnigScanner::FindNextMatchSync, allow_raw_pointers())
       ;
 }

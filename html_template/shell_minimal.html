@@ -153,15 +153,17 @@
             //     ['hello world! Hello World', 5, 20]); // arguments
             var instance = new Module.OnigRegExp("e");
             var result = instance.search('hello world! Hello World', 0, 20);
-            console.log(result.Count());
+            console.log(result.index);
             instance.delete();
 
             var vectorStr = new Module.VectorString();
-            vectorStr.push_back('first');
-            vectorStr.push_back('second');
+            vectorStr.push_back("e");
+            // vectorStr.push_back('second');
 
             var scanner = new Module.OnigScanner(vectorStr);
-            console.log(scanner);
+            result = scanner.findNextMatchSync('hello world! Hello World', 0);
+            console.log(result.index);
+            console.log(result);
         });
     </script>
     {{{ SCRIPT }}}
