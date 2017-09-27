@@ -19,7 +19,7 @@ private:
 //   static Local<Value> CaptureIndicesForMatch(OnigResult* result, OnigString* source);
 
   std::vector<OnigRegExp*> regExps;
-  OnigSearcher searcher;
+  OnigSearcher* searcher;
 };
 
 #endif  // SRC_ONIG_SCANNER_H_

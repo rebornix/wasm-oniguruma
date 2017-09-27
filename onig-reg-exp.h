@@ -10,16 +10,11 @@
 
 class OnigRegExp {
 public:
-  OnigRegExp(int x, std::string source);
-  void incrementX();
-
-  int getX() const;
-  void setX(int x_);
+  OnigRegExp(std::string source);
 
   OnigResult* search(std::string data, size_t position, size_t end);
 
 private:
-  int x;
   std::string source;
   regex_t* regex_;
 };

@@ -6,8 +6,6 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/bind.h>
 
-using namespace emscripten;
-
 class OnigSearcher {
 public:
   OnigSearcher(std::vector<OnigRegExp*> regExps)

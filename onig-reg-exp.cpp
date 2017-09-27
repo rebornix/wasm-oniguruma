@@ -2,9 +2,8 @@
 
 using namespace emscripten;
 
-OnigRegExp::OnigRegExp(int x, std::string source)
-    : x(x)
-    , source(source)
+OnigRegExp::OnigRegExp(std::string source)
+    : source(source)
     , regex_(NULL)
 {
     OnigErrorInfo error;
@@ -13,13 +12,6 @@ OnigRegExp::OnigRegExp(int x, std::string source)
                           ONIG_OPTION_CAPTURE_GROUP, ONIG_ENCODING_UTF8,
                           ONIG_SYNTAX_DEFAULT, &error);
 }
-
-void OnigRegExp::incrementX() {
-    ++x;
-}
-
-int OnigRegExp::getX() const { return x; }
-void OnigRegExp::setX(int x_) { x = x_; }
 
 OnigResult* OnigRegExp::search(std::string data, size_t position, size_t end) {
     const UChar* searchData = (const UChar*)data.data();
@@ -38,9 +30,7 @@ OnigResult* OnigRegExp::search(std::string data, size_t position, size_t end) {
 // Binding code
 EMSCRIPTEN_BINDINGS(OnigRegExp) {
     class_<OnigRegExp>("OnigRegExp")
-      .constructor<int, std::string>()
-      .function("incrementX", &OnigRegExp::incrementX)
+      .constructor<std::string>()
       .function("search", &OnigRegExp::search, allow_raw_pointers())
-      .property("x", &OnigRegExp::getX, &OnigRegExp::setX)
       ;
 }

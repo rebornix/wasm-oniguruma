@@ -151,13 +151,17 @@
             //     null, // return type
             //     ['string', 'number', 'number'], // argument types
             //     ['hello world! Hello World', 5, 20]); // arguments
-            var instance = new Module.OnigRegExp(10, "e");
+            var instance = new Module.OnigRegExp("e");
             var result = instance.search('hello world! Hello World', 0, 20);
             console.log(result.Count());
-            instance.incrementX();
-            console.log(instance.x); // 11
-            instance.x = 20; // 20
             instance.delete();
+
+            var vectorStr = new Module.VectorString();
+            vectorStr.push_back('first');
+            vectorStr.push_back('second');
+
+            var scanner = new Module.OnigScanner(vectorStr);
+            console.log(scanner);
         });
     </script>
     {{{ SCRIPT }}}

@@ -1,5 +1,7 @@
 #include "onig-searcher.h"
 
+using namespace emscripten;
+
 OnigResult* OnigSearcher::Search(std::string source, int charOffset) {
   int bestLocation = 0;
   OnigResult* bestResult;
