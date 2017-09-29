@@ -1,4 +1,6 @@
 #include "onig-scanner.h"
+#include <iostream>
+#include <emscripten.h>
 using namespace emscripten;
 
 OnigScanner::OnigScanner(std::vector<std::string> sources)
@@ -25,6 +27,66 @@ CaptureResult* OnigScanner::FindNextMatchSync(std::string v8String, size_t v8Sta
     } else {
         return NULL;
     }
+}
+
+std::wstring UTF8to16(const char * in)
+{
+    std::wstring out;
+    if (in == NULL)
+        return out;
+
+    unsigned int codepoint;
+    while (*in != 0)
+    {
+        unsigned char ch = static_cast<unsigned char>(*in);
+        if (ch <= 0x7f)
+            codepoint = ch;
+        else if (ch <= 0xbf)
+            codepoint = (codepoint << 6) | (ch & 0x3f);
+        else if (ch <= 0xdf)
+            codepoint = ch & 0x1f;
+        else if (ch <= 0xef)
+            codepoint = ch & 0x0f;
+        else
+            codepoint = ch & 0x07;
+        ++in;
+        if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
+        {
+            if (codepoint > 0xffff)
+            {
+                out.append(1, static_cast<wchar_t>(0xd800 + (codepoint >> 10)));
+                out.append(1, static_cast<wchar_t>(0xdc00 + (codepoint & 0x03ff)));
+            }
+            else if (codepoint < 0xd800 || codepoint >= 0xe000)
+                out.append(1, static_cast<wchar_t>(codepoint));
+        }
+    }
+    return out;
+}
+
+
+void test(int _string)
+{
+    uintptr_t p = _string;
+    char* _sstring = reinterpret_cast<char *>(p);
+    printf("str %s, length %d\n", _sstring, std::strlen(_sstring));
+    printf("1st %c\n", *_sstring);
+    printf("2nd %c\n", *(_sstring + 1));
+    printf("3rd %c\n", *(_sstring + 2));
+    printf("4th %c\n", *(_sstring + 3));
+    printf("5th %c\n", *(_sstring + 4));
+    printf("6th %c\n", *(_sstring + 5));
+    printf("7th %c\n", *(_sstring + 6));
+    printf("8th %c\n", *(_sstring + 7));
+    printf("9th %c\n", *(_sstring + 8));
+
+    std::cout << _sstring << std::endl;
+    std::cout << UTF8to16(_sstring).length() << std::endl;
+}
+
+EMSCRIPTEN_BINDINGS(test) {
+    // this may or may not work, let's try directly binding the static funcs
+    function("test", &test, allow_raw_pointers());
 }
 
 EMSCRIPTEN_BINDINGS(CaptureIndice) {

@@ -266,21 +266,6 @@
                         console.log(`actual ${actual} !== expected ${expected}`);
                     }
                 }
-                // returns an array of the match and all capture groups
-                let regex = new OnigRegExp('\\w(\\d+)')
-                result = regex.searchSync('----a123----')
-                expect(result.length, 2)
-                expect(result[0].match, 'a123')
-                expect(result[0].start, 4)
-                expect(result[0].end, 8)
-                expect(result[0].index, 0)
-                expect(result[0].length, 4)
-                expect(result[1].match, '123')
-                expect(result[1].start, 5)
-                expect(result[1].end, 8)
-                expect(result[1].index, 1)
-                expect(result[1].length, 3)
-
                 // OnigScanner, findNextMatchSync
                 var vectorStr = new oniguruma.VectorString();
                 vectorStr.push_back('a');
@@ -292,6 +277,37 @@
                 expect(scanner.findNextMatchSync('xxaxxbxxc', 4).index, 1)
                 expect(scanner.findNextMatchSync('xxaxxbxxc', 7).index, 2)
                 expect(scanner.findNextMatchSync('xxaxxbxxc', 9), null)
+
+                vectorStr = new oniguruma.VectorString();
+                vectorStr.push_back('1');
+                vectorStr.push_back('2');
+                scanner = new oniguruma.OnigScanner(vectorStr)
+
+                // const subject = 'ab…cde21';
+                // const maxTestStringSize = (subject.length * 2 + 1) * 2;
+                // const testString = oniguruma._malloc(maxTestStringSize);
+                // oniguruma.stringToUTF8(subject, testString, maxTestStringSize);
+
+                // let match = scanner.findNextMatchSync(testString, 5)
+                // expect(match.index, toBe(1)
+
+                vectorStr = new oniguruma.VectorString();
+                vectorStr.push_back('\"');
+                scanner = new oniguruma.OnigScanner(vectorStr)
+
+                console.log('------');
+                const subject = '{"…": 1}';
+                const maxTestStringSize = (subject.length * 2 + 1) * 2;
+                const testString = oniguruma._malloc(maxTestStringSize);
+                oniguruma.stringToUTF8(subject, testString, maxTestStringSize);
+
+                oniguruma.test(testString);
+                // match = scanner.findNextMatchSync(testString, 1)
+                // // expect(match.captureIndices).toEqual([{index: 0, start: 1, end: 2, length: 1}])
+                // expect(match.IndiceAt(0).index, 0);
+                // expect(match.IndiceAt(0).start, 1);
+                // expect(match.IndiceAt(0).end, 2);
+                // expect(match.IndiceAt(0).length, 1);
 
             });
         });
