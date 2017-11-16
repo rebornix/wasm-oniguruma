@@ -2,7 +2,9 @@
 
 using namespace emscripten;
 
-OnigResult* OnigSearcher::Search(std::string source, int charOffset) {
+OnigResult* OnigSearcher::Search(OnigString* source, int charOffset) {
+  int byteOffset = source->ConvertUtf16OffsetToUtf8(charOffset);
+
   int bestLocation = 0;
   OnigResult* bestResult;
 
@@ -10,7 +12,7 @@ OnigResult* OnigSearcher::Search(std::string source, int charOffset) {
   int index = 0;
   while (iter < regExps.end()) {
     OnigRegExp *regExp = (*iter);
-    OnigResult* result = regExp->search(source, charOffset, source.length());
+    OnigResult* result = regExp->search(source, byteOffset);
     if (result != NULL && result->Count() > 0) {
       int location = result->LocationAt(0);
 

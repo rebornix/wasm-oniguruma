@@ -189,10 +189,20 @@
             onig(oniguruma);
             document.querySelector('.mybutton').addEventListener('click', function () {
                 var vectorStr = new oniguruma.VectorString();
-                vectorStr.push_back('\\w(\\d+)');
+                // vectorStr.push_back('\\w(\\d+)');
+                vectorStr.push_back('a');
+                vectorStr.push_back('b');
+                vectorStr.push_back('c');
 
                 var scanner = new oniguruma.OnigScanner(vectorStr);
-                result = scanner._findNextMatchSync('----a123----', 0);
+
+                var subject = 'xxaxxbxxc';
+                var maxTestStringSize = (subject.length * 2 + 1) * 2;
+                var testString = oniguruma._malloc(maxTestStringSize);
+                oniguruma.stringToUTF8(subject, testString, maxTestStringSize);
+
+                // scanner.test(testString, subject.length);
+                result = scanner._findNextMatchSync(testString, subject.length, 4);
                 for (var i = 0; i < result.Count(); i++) {
                     var indice = result.IndiceAt(i);
                     console.log(`start: ${indice.start}, end: ${indice.end}, length: ${indice.length}`);
@@ -241,7 +251,12 @@
                     string = this.convertToString(string)
                     startPosition = this.convertToNumber(startPosition)
 
-                    let match = this._findNextMatchSync(string, startPosition)
+                    var maxTestStringSize = (string.length * 2 + 1) * 2;
+                    var testString = oniguruma._malloc(maxTestStringSize);
+                    oniguruma.stringToUTF8(string, testString, maxTestStringSize);
+
+                    let match = this._findNextMatchSync(testString, string.length, startPosition);
+
                     if (match) match.scanner = this
                     return match
                 }
@@ -282,32 +297,19 @@
                 vectorStr.push_back('1');
                 vectorStr.push_back('2');
                 scanner = new oniguruma.OnigScanner(vectorStr)
+                expect(scanner.findNextMatchSync('ab…cde21', 5).index, 1)
 
-                // const subject = 'ab…cde21';
-                // const maxTestStringSize = (subject.length * 2 + 1) * 2;
-                // const testString = oniguruma._malloc(maxTestStringSize);
-                // oniguruma.stringToUTF8(subject, testString, maxTestStringSize);
-
-                // let match = scanner.findNextMatchSync(testString, 5)
-                // expect(match.index, toBe(1)
 
                 vectorStr = new oniguruma.VectorString();
                 vectorStr.push_back('\"');
                 scanner = new oniguruma.OnigScanner(vectorStr)
-
                 console.log('------');
-                const subject = '{"…": 1}';
-                const maxTestStringSize = (subject.length * 2 + 1) * 2;
-                const testString = oniguruma._malloc(maxTestStringSize);
-                oniguruma.stringToUTF8(subject, testString, maxTestStringSize);
-
-                oniguruma.test(testString);
-                // match = scanner.findNextMatchSync(testString, 1)
-                // // expect(match.captureIndices).toEqual([{index: 0, start: 1, end: 2, length: 1}])
-                // expect(match.IndiceAt(0).index, 0);
-                // expect(match.IndiceAt(0).start, 1);
-                // expect(match.IndiceAt(0).end, 2);
-                // expect(match.IndiceAt(0).length, 1);
+                match = scanner.findNextMatchSync('{"…": 1}', 1)
+                // expect(match.captureIndices).toEqual([{index: 0, start: 1, end: 2, length: 1}])
+                expect(match.IndiceAt(0).index, 0);
+                expect(match.IndiceAt(0).start, 1);
+                expect(match.IndiceAt(0).end, 2);
+                expect(match.IndiceAt(0).length, 1);
 
             });
         });

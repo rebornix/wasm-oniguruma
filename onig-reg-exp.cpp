@@ -13,8 +13,9 @@ OnigRegExp::OnigRegExp(std::string source)
                           ONIG_SYNTAX_DEFAULT, &error);
 }
 
-OnigResult* OnigRegExp::search(std::string data, size_t position, size_t end) {
-    const UChar* searchData = (const UChar*)data.data();
+OnigResult* OnigRegExp::search(OnigString* str, size_t position) {
+    const UChar* searchData =  reinterpret_cast<const UChar*>(str->utf8_value());
+    size_t end = str->utf8_length();
     OnigRegion* region = onig_region_new();
     int status = onig_search(regex_, searchData, searchData + end,
                              searchData + position, searchData + end, region,
@@ -22,7 +23,7 @@ OnigResult* OnigRegExp::search(std::string data, size_t position, size_t end) {
     if (status != ONIG_MISMATCH) {
         return new OnigResult(region, -1);
     } else {
-        printf("Status value = %d\n", status);
+        // printf("Status value = %d\n", status);
         onig_region_free(region, 1);
     }
 }

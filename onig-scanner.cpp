@@ -9,9 +9,10 @@ OnigScanner::OnigScanner(std::vector<std::string> sources)
     int length = sources.size();
     regExps.resize(length);
 
-    std::vector< std::string >::iterator iter = sources.begin();
+    std::vector<std::string>::iterator iter = sources.begin();
     int index = 0;
-    while (iter < sources.end()) {
+    while (iter < sources.end())
+    {
         regExps[index] = new OnigRegExp(*iter);
         ++index;
         ++iter;
@@ -20,16 +21,25 @@ OnigScanner::OnigScanner(std::vector<std::string> sources)
     searcher = new OnigSearcher(regExps);
 }
 
-CaptureResult* OnigScanner::FindNextMatchSync(std::string v8String, size_t v8StartLocation) {
-    OnigResult* bestResult = searcher->Search(v8String, v8StartLocation);
-    if (bestResult != NULL) {
-        return new CaptureResult(bestResult);
-    } else {
+CaptureResult* OnigScanner::FindNextMatchSync(int _string, int utf16_length, size_t v16StartLocation)
+{
+    uintptr_t p = _string;
+    char *_sstring = reinterpret_cast<char *>(p);
+
+    OnigString* source = new OnigString(_sstring, utf16_length);
+
+    OnigResult *bestResult = searcher->Search(source, v16StartLocation);
+    if (bestResult != NULL)
+    {
+        return new CaptureResult(bestResult, source);
+    }
+    else
+    {
         return NULL;
     }
 }
 
-std::wstring UTF8to16(const char * in)
+std::wstring UTF8to16(const char *in)
 {
     std::wstring out;
     if (in == NULL)
@@ -65,11 +75,12 @@ std::wstring UTF8to16(const char * in)
 }
 
 
-void test(int _string)
+void test(int _string, int utf16_length)
 {
     uintptr_t p = _string;
-    char* _sstring = reinterpret_cast<char *>(p);
+    char *_sstring = reinterpret_cast<char *>(p);
     printf("str %s, length %d\n", _sstring, std::strlen(_sstring));
+    size_t utf8_length_ = std::strlen(_sstring);
     printf("1st %c\n", *_sstring);
     printf("2nd %c\n", *(_sstring + 1));
     printf("3rd %c\n", *(_sstring + 2));
@@ -81,7 +92,65 @@ void test(int _string)
     printf("9th %c\n", *(_sstring + 8));
 
     std::cout << _sstring << std::endl;
-    std::cout << UTF8to16(_sstring).length() << std::endl;
+    std::wstring utf16Val = UTF8to16(_sstring);
+    size_t utf16_length_ = utf16Val.length();
+    std::cout << utf16_length_ << std::endl;
+
+    int *utf16OffsetToUtf8 = new int[utf16_length_ + 1];
+    utf16OffsetToUtf8[utf16_length_] = utf8_length_;
+    int *utf8OffsetToUtf16 = new int[utf8_length_ + 1];
+    utf8OffsetToUtf16[utf8_length_] = utf16_length_;
+
+
+    int i8 = 0;
+    for (int i16 = 0, len = utf16_length_; i16 < len; i16++)
+    {
+        uint16_t in = utf16Val[i16];
+        unsigned int codepoint = in;
+        bool wasSurrogatePair = false;
+
+        if (in >= 0xd800 && in <= 0xdbff)
+        {
+            // Hit a high surrogate, try to look for a matching low surrogate
+            if (i16 + 1 < len)
+            {
+                uint16_t next = utf16Val[i16 + 1];
+                if (next >= 0xdc00 && next <= 0xdfff)
+                {
+                    // Found the matching low surrogate
+                    codepoint = (((in - 0xd800) << 10) + 0x10000) | (next - 0xdc00);
+                    wasSurrogatePair = true;
+                }
+            }
+        }
+
+        utf16OffsetToUtf8[i16] = i8;
+
+        if (codepoint <= 0x7f) {
+            utf8OffsetToUtf16[i8++] = i16;
+        } else if (codepoint <= 0x7ff) {
+            utf8OffsetToUtf16[i8++] = i16;
+            utf8OffsetToUtf16[i8++] = i16;
+        } else if (codepoint <= 0xffff) {
+            utf8OffsetToUtf16[i8++] = i16;
+            utf8OffsetToUtf16[i8++] = i16;
+            utf8OffsetToUtf16[i8++] = i16;
+        } else {
+            utf8OffsetToUtf16[i8++] = i16;
+            utf8OffsetToUtf16[i8++] = i16;
+            utf8OffsetToUtf16[i8++] = i16;
+            utf8OffsetToUtf16[i8++] = i16;
+        }
+
+        if (wasSurrogatePair) {
+            utf16OffsetToUtf8[i16 + 1] = utf16OffsetToUtf8[i16];
+            i16++;
+        }
+    }
+
+    for (int i16 = 0, len = utf16_length_; i16 < len; i16++) {
+        printf("u16: %d, u8: %d\n", i16, utf16OffsetToUtf8[i16]);
+    }
 }
 
 EMSCRIPTEN_BINDINGS(test) {
@@ -91,30 +160,30 @@ EMSCRIPTEN_BINDINGS(test) {
 
 EMSCRIPTEN_BINDINGS(CaptureIndice) {
     class_<CaptureIndice>("CaptureIndice")
-      .constructor<int, int, int, int>(allow_raw_pointers())
-      .property("index", &CaptureIndice::getIndex, &CaptureIndice::setIndex)
-      .property("start", &CaptureIndice::getStart, &CaptureIndice::setStart)
-      .property("end", &CaptureIndice::getEnd, &CaptureIndice::setEnd)
-      .property("length", &CaptureIndice::getLength, &CaptureIndice::setLength)
-      ;
+        .constructor<int, int, int, int>(allow_raw_pointers())
+        .property("index", &CaptureIndice::getIndex, &CaptureIndice::setIndex)
+        .property("start", &CaptureIndice::getStart, &CaptureIndice::setStart)
+        .property("end", &CaptureIndice::getEnd, &CaptureIndice::setEnd)
+        .property("length", &CaptureIndice::getLength, &CaptureIndice::setLength)
+          ;
 };
 
 EMSCRIPTEN_BINDINGS(CaptureResult) {
     class_<CaptureResult>("CaptureResult")
-      .constructor<OnigResult*>(allow_raw_pointers())
-      .property("index", &CaptureResult::getIndex, &CaptureResult::setIndex)
-      // returning array/vector is a bummer, here we return two functions.
-      .function("Count", &CaptureResult::Count)
-      .function("IndiceAt", &CaptureResult::IndiceAt, allow_raw_pointers())
+        .constructor<OnigResult *, OnigString*>(allow_raw_pointers())
+        .property("index", &CaptureResult::getIndex, &CaptureResult::setIndex)
+        // returning array/vector is a bummer, here we return two functions.
+        .function("Count", &CaptureResult::Count)
+        .function("IndiceAt", &CaptureResult::IndiceAt, allow_raw_pointers())
 
-    //   .property("captureIndices", &CaptureResult::getCaptureIndices, &CaptureResult::setCaptureIndices)
-      ;
+        //   .property("captureIndices", &CaptureResult::getCaptureIndices, &CaptureResult::setCaptureIndices)
+        ;
 };
 
 EMSCRIPTEN_BINDINGS(OnigScanner) {
     register_vector<std::string>("VectorString");
     class_<OnigScanner>("OnigScanner")
-      .constructor<std::vector<std::string>>(allow_raw_pointers())
-      .function("_findNextMatchSync", &OnigScanner::FindNextMatchSync, allow_raw_pointers())
-      ;
+        .constructor<std::vector<std::string>>(allow_raw_pointers())
+    .function("_findNextMatchSync", &OnigScanner::FindNextMatchSync, allow_raw_pointers())
+    ;
 }

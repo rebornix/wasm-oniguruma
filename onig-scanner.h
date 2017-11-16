@@ -4,6 +4,7 @@
 #include "onig-result.h"
 #include "onig-reg-exp.h"
 #include "onig-searcher.h"
+#include "onig-string.h"
 #include <emscripten/emscripten.h>
 #include <emscripten/bind.h>
 
@@ -30,14 +31,14 @@ private:
 
 class CaptureResult {
 public:
-    CaptureResult(OnigResult* result) {
+    CaptureResult(OnigResult* result, OnigString* source) {
         index = result->getIndex();
         int resultCount = result->Count();
         std::vector<CaptureIndice*> arr;
 
         for(int i = 0; i < resultCount; ++i) {
-            int captureStart = result->LocationAt(i);
-            int captureEnd = result->LocationAt(i) + result->LengthAt(i);
+            int captureStart = source->ConvertUtf8OffsetToUtf16(result->LocationAt(i));
+            int captureEnd = source->ConvertUtf8OffsetToUtf16(result->LocationAt(i) + result->LengthAt(i));
 
             arr.push_back(new CaptureIndice(i, captureStart, captureEnd, captureEnd - captureStart));
         }
@@ -66,7 +67,8 @@ class OnigScanner {
 public:
   OnigScanner(std::vector<std::string> sources);
 
-  CaptureResult* FindNextMatchSync(std::string v8String, size_t v8StartLocation);
+//   CaptureResult* FindNextMatchSync(std::string v8String, size_t v8StartLocation);
+  CaptureResult* FindNextMatchSync(int _string, int utf16_length, size_t v16StartLocation);
 private:
 
 //   void FindNextMatch(std::string v8String, size_t v8StartLocation);

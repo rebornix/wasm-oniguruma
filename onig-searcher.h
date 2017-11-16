@@ -3,6 +3,7 @@
 
 #include "onig-reg-exp.h"
 #include "onig-result.h"
+#include "onig-string.h"
 #include <emscripten/emscripten.h>
 #include <emscripten/bind.h>
 
@@ -12,7 +13,7 @@ public:
     : regExps(regExps) {}
 
 
-  OnigResult* Search(std::string source, int charOffset);
+  OnigResult* Search(OnigString* source, int charOffset);
 
  private:
   std::vector<OnigRegExp*> regExps;
