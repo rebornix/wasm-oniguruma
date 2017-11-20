@@ -1,3 +1,2 @@
-// postfix.js
-  };
-});
+return Module;
+}));

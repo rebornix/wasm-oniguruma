@@ -115,78 +115,10 @@
     <hr>
     <button class="mybutton">Run myFunction</button>
     <script type='text/javascript'>
-        require(['oniguruma'], function (onig) {
+        require(['oniguruma'], function (oniguruma) {
             var statusElement = document.getElementById('status');
             var progressElement = document.getElementById('progress');
             var spinnerElement = document.getElementById('spinner');
-            var oniguruma = {
-                preRun: [],
-                postRun: [],
-                print: (function () {
-                    var element = document.getElementById('output');
-                    if (element) element.value = ''; // clear browser cache
-                    return function (text) {
-                        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(
-                            ' ');
-                        console.log(text);
-                        if (element) {
-                            element.value += text + "\n";
-                            element.scrollTop = element.scrollHeight; // focus on bottom
-                        }
-                    };
-                })(),
-                printErr: function (text) {
-                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-                    if (0) { // XXX disabled for safety typeof dump == 'function') {
-                        dump(text + '\n'); // fast, straight to the real console
-                    } else {
-                        console.error(text);
-                    }
-                },
-                canvas: (function () {
-                    var canvas = document.getElementById('canvas');
-
-                    // As a default initial behavior, pop up an alert when webgl context is lost. To make your
-                    // application robust, you may want to override this behavior before shipping!
-                    // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
-                    canvas.addEventListener("webglcontextlost", function (e) {
-                        alert('WebGL context lost. You will need to reload the page.');
-                        e.preventDefault();
-                    }, false);
-
-                    return canvas;
-                })(),
-                setStatus: function (text) {
-                    if (!oniguruma.setStatus.last) oniguruma.setStatus.last = {
-                        time: Date.now(),
-                        text: ''
-                    };
-                    if (text === oniguruma.setStatus.text) return;
-                    var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-                    var now = Date.now();
-                    if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
-                    if (m) {
-                        text = m[1];
-                        progressElement.value = parseInt(m[2]) * 100;
-                        progressElement.max = parseInt(m[4]) * 100;
-                        progressElement.hidden = false;
-                        spinnerElement.hidden = false;
-                    } else {
-                        progressElement.value = null;
-                        progressElement.max = null;
-                        progressElement.hidden = true;
-                        if (!text) spinnerElement.hidden = true;
-                    }
-                    statusElement.innerHTML = text;
-                },
-                totalDependencies: 0,
-                monitorRunDependencies: function (left) {
-                    this.totalDependencies = Math.max(this.totalDependencies, left);
-                    oniguruma.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' +
-                        this.totalDependencies + ')' : 'All downloads complete.');
-                }
-            };
-            onig(oniguruma);
             document.querySelector('.mybutton').addEventListener('click', function () {
                 var vectorStr = new oniguruma.VectorString();
                 // vectorStr.push_back('\\w(\\d+)');
@@ -281,6 +213,21 @@
                         console.log(`actual ${actual} !== expected ${expected}`);
                     }
                 }
+
+                function expectMatch(actual, expected) {
+                    if (actual.index !== expected.index) {
+                        console.log(`actual index ${actual.index} !== expected index ${expected.index}`);
+                    }
+                    if (actual.start !== expected.start) {
+                        console.log(`actual start ${actual.start} !== expected start ${expected.start}`);
+                    }
+                    if (actual.end !== expected.end) {
+                        console.log(`actual end ${actual.end} !== expected end ${expected.end}`);
+                    }
+                    if (actual.length !== expected.length) {
+                        console.log(`actual length ${actual.length} !== expected length ${expected.length}`);
+                    }
+                }
                 // OnigScanner, findNextMatchSync
                 var vectorStr = new oniguruma.VectorString();
                 vectorStr.push_back('a');
@@ -305,11 +252,46 @@
                 scanner = new oniguruma.OnigScanner(vectorStr)
                 console.log('------');
                 match = scanner.findNextMatchSync('{"…": 1}', 1)
-                // expect(match.captureIndices).toEqual([{index: 0, start: 1, end: 2, length: 1}])
                 expect(match.IndiceAt(0).index, 0);
                 expect(match.IndiceAt(0).start, 1);
                 expect(match.IndiceAt(0).end, 2);
                 expect(match.IndiceAt(0).length, 1);
+
+                // when the string searched contains surrogate pairs
+                console.log('------');
+                vectorStr = new oniguruma.VectorString();
+                vectorStr.push_back('Y');
+                vectorStr.push_back('X');
+                scanner = new oniguruma.OnigScanner(vectorStr)
+                match = scanner.findNextMatchSync('a💻bYX', 0)
+                expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
+
+                match = scanner.findNextMatchSync('a💻bYX', 1)
+                expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
+
+                match = scanner.findNextMatchSync('a💻bYX', 3)
+                expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
+
+                match = scanner.findNextMatchSync('a💻bYX', 4)
+                expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
+
+                match = scanner.findNextMatchSync('a💻bYX', 5)
+                expect(match.index, 1)
+                expectMatch(match.IndiceAt(0), {index: 0, start: 5, end: 6, length: 1})
+
+                // when the input string contains invalid surrogate pairs
+                console.log('------');
+                vectorStr = new oniguruma.VectorString();
+                vectorStr.push_back('X');
+                scanner = new oniguruma.OnigScanner(vectorStr)
+                match = scanner.findNextMatchSync(`X${String.fromCharCode(0xd83c)}X`, 0)
+                expectMatch(match.IndiceAt(0), {index: 0, start: 0, end: 1, length: 1})
+
+                // match = scanner.findNextMatchSync(`X${String.fromCharCode(0xd83c)}X`, 1)
+                // expectMatch(match.IndiceAt(0), {index: 0, start: 2, end: 3, length: 1})
+
+                // match = scanner.findNextMatchSync(`X${String.fromCharCode(0xd83c)}X`, 2)
+                // expectMatch(match.IndiceAt(0), {index: 0, start: 2, end: 3, length: 1})
 
             });
         });
