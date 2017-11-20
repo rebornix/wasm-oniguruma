@@ -115,28 +115,15 @@
     <hr>
     <button class="mybutton">Run myFunction</button>
     <script type='text/javascript'>
-        require(['oniguruma'], function (oniguruma) {
+        require(['wasm-onig'], function (oniguruma) {
             var statusElement = document.getElementById('status');
             var progressElement = document.getElementById('progress');
             var spinnerElement = document.getElementById('spinner');
             document.querySelector('.mybutton').addEventListener('click', function () {
-                var vectorStr = new oniguruma.VectorString();
-                // vectorStr.push_back('\\w(\\d+)');
-                vectorStr.push_back('a');
-                vectorStr.push_back('b');
-                vectorStr.push_back('c');
-
-                var scanner = new oniguruma.OnigScanner(vectorStr);
-
-                var subject = 'xxaxxbxxc';
-                var maxTestStringSize = (subject.length * 2 + 1) * 2;
-                var testString = oniguruma._malloc(maxTestStringSize);
-                oniguruma.stringToUTF8(subject, testString, maxTestStringSize);
-
-                // scanner.test(testString, subject.length);
-                result = scanner._findNextMatchSync(testString, subject.length, 4);
-                for (var i = 0; i < result.Count(); i++) {
-                    var indice = result.IndiceAt(i);
+                var scanner2 = new oniguruma.OnigScanner2(['a', 'b', 'c']);
+                var ret2 = scanner2._findNextMatchSync('xxaxxbxxc', 4);
+                for (var i = 0; i < ret2.Count(); i++) {
+                    var indice = ret2.IndiceAt(i);
                     console.log(`start: ${indice.start}, end: ${indice.end}, length: ${indice.length}`);
                 }
 
@@ -176,38 +163,6 @@
                     }
                 }
 
-                oniguruma.OnigScanner.prototype.findNextMatchSync = function (string, startPosition) {
-                    if (startPosition == null) {
-                        startPosition = 0
-                    }
-                    string = this.convertToString(string)
-                    startPosition = this.convertToNumber(startPosition)
-
-                    var maxTestStringSize = (string.length * 2 + 1) * 2;
-                    var testString = oniguruma._malloc(maxTestStringSize);
-                    oniguruma.stringToUTF8(string, testString, maxTestStringSize);
-
-                    let match = this._findNextMatchSync(testString, string.length, startPosition);
-
-                    if (match) match.scanner = this
-                    return match
-                }
-
-                oniguruma.OnigScanner.prototype.convertToString = function (value) {
-                    if (value === undefined) return 'undefined'
-                    if (value === null) return 'null'
-                    return value.toString()
-                }
-
-                oniguruma.OnigScanner.prototype.convertToNumber = function (value) {
-                    value = parseInt(value)
-                    if (!isFinite(value)) {
-                        value = 0
-                    }
-                    value = Math.max(value, 0)
-                    return value
-                }
-
                 function expect(actual, expected) {
                     if (actual !== expected) {
                         console.log(`actual ${actual} !== expected ${expected}`);
@@ -228,30 +183,19 @@
                         console.log(`actual length ${actual.length} !== expected length ${expected.length}`);
                     }
                 }
-                // OnigScanner, findNextMatchSync
-                var vectorStr = new oniguruma.VectorString();
-                vectorStr.push_back('a');
-                vectorStr.push_back('b');
-                vectorStr.push_back('c');
-                scanner = new oniguruma.OnigScanner(vectorStr)
-                expect(scanner.findNextMatchSync('x', 0), null)
-                expect(scanner.findNextMatchSync('xxaxxbxxc', 0).index, 0)
-                expect(scanner.findNextMatchSync('xxaxxbxxc', 4).index, 1)
-                expect(scanner.findNextMatchSync('xxaxxbxxc', 7).index, 2)
-                expect(scanner.findNextMatchSync('xxaxxbxxc', 9), null)
 
-                vectorStr = new oniguruma.VectorString();
-                vectorStr.push_back('1');
-                vectorStr.push_back('2');
-                scanner = new oniguruma.OnigScanner(vectorStr)
-                expect(scanner.findNextMatchSync('ab…cde21', 5).index, 1)
+                scanner2 = new oniguruma.OnigScanner2(['a', 'b', 'c']);
+                expect(scanner2._findNextMatchSync('x', 0), null)
+                expect(scanner2._findNextMatchSync('xxaxxbxxc', 0).index, 0)
+                expect(scanner2._findNextMatchSync('xxaxxbxxc', 4).index, 1)
+                expect(scanner2._findNextMatchSync('xxaxxbxxc', 7).index, 2)
+                expect(scanner2._findNextMatchSync('xxaxxbxxc', 9), null)
 
+                scanner2 = new oniguruma.OnigScanner2(['1', '2']);
+                expect(scanner2._findNextMatchSync('ab…cde21', 5).index, 1)
 
-                vectorStr = new oniguruma.VectorString();
-                vectorStr.push_back('\"');
-                scanner = new oniguruma.OnigScanner(vectorStr)
-                console.log('------');
-                match = scanner.findNextMatchSync('{"…": 1}', 1)
+                scanner2 = new oniguruma.OnigScanner2(['\"']);
+                match = scanner2._findNextMatchSync('{"…": 1}', 1)
                 expect(match.IndiceAt(0).index, 0);
                 expect(match.IndiceAt(0).start, 1);
                 expect(match.IndiceAt(0).end, 2);
@@ -259,32 +203,27 @@
 
                 // when the string searched contains surrogate pairs
                 console.log('------');
-                vectorStr = new oniguruma.VectorString();
-                vectorStr.push_back('Y');
-                vectorStr.push_back('X');
-                scanner = new oniguruma.OnigScanner(vectorStr)
-                match = scanner.findNextMatchSync('a💻bYX', 0)
+                scanner2 = new oniguruma.OnigScanner2(['Y', 'X']);
+                match = scanner2._findNextMatchSync('a💻bYX', 0)
                 expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
 
-                match = scanner.findNextMatchSync('a💻bYX', 1)
+                match = scanner2._findNextMatchSync('a💻bYX', 1)
                 expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
 
-                match = scanner.findNextMatchSync('a💻bYX', 3)
+                match = scanner2._findNextMatchSync('a💻bYX', 3)
                 expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
 
-                match = scanner.findNextMatchSync('a💻bYX', 4)
+                match = scanner2._findNextMatchSync('a💻bYX', 4)
                 expectMatch(match.IndiceAt(0), {index: 0, start: 4, end: 5, length: 1})
 
-                match = scanner.findNextMatchSync('a💻bYX', 5)
+                match = scanner2._findNextMatchSync('a💻bYX', 5)
                 expect(match.index, 1)
                 expectMatch(match.IndiceAt(0), {index: 0, start: 5, end: 6, length: 1})
 
                 // when the input string contains invalid surrogate pairs
                 console.log('------');
-                vectorStr = new oniguruma.VectorString();
-                vectorStr.push_back('X');
-                scanner = new oniguruma.OnigScanner(vectorStr)
-                match = scanner.findNextMatchSync(`X${String.fromCharCode(0xd83c)}X`, 0)
+                scanner2 = new oniguruma.OnigScanner2(['X']);
+                match = scanner2._findNextMatchSync(`X${String.fromCharCode(0xd83c)}X`, 0)
                 expectMatch(match.IndiceAt(0), {index: 0, start: 0, end: 1, length: 1})
 
                 // match = scanner.findNextMatchSync(`X${String.fromCharCode(0xd83c)}X`, 1)
